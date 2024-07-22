@@ -85,5 +85,37 @@ namespace PDFiumCore.Project.Tests
 			fpdfview.FPDF_ClosePage( page );
 			fpdfview.FPDF_CloseDocument( document );
 		}
+		[Test]
+		public void Test_FindLoop()
+		{
+			var document = fpdfview.FPDF_LoadDocument( "pdf-sample.pdf", null );
+			Assert.That( document, Is.Not.Null );
+			var page = fpdfview.FPDF_LoadPage( document, 0 );
+			Assert.That( page, Is.Not.Null );
+			var textPage = fpdf_text.FPDFTextLoadPage( page );
+			Assert.That( textPage, Is.Not.Null );
+
+			var findHandle = fpdf_text.FPDFTextFindStart( textPage, "PDF", 0, 0 );
+			Assert.That( findHandle, Is.Not.Null );
+			while( fpdf_text.FPDFTextFindNext( findHandle ) > 0 )
+			{
+				var foundCharIndex = fpdf_text.FPDFTextGetSchResultIndex( findHandle );
+				var foundTextIndex = fpdf_searchex.FPDFTextGetTextIndexFromCharIndex( textPage, foundCharIndex );
+				var foundTextCount = fpdf_text.FPDFTextGetSchCount( findHandle );
+
+				var charsOnPage = fpdf_text.FPDFTextCountChars( textPage );
+				int startPosition = Math.Max( foundTextIndex - 20, 0 );
+				int endPosition = Math.Min( foundTextIndex + foundTextCount + 20, charsOnPage );
+				var result = fpdf_text.FPDFTextGetText( textPage, startPosition, endPosition - startPosition, out var text );
+				Assert.That( result, Is.True );
+				Assert.That( text.Length, Is.EqualTo( endPosition - startPosition ) );
+
+				Assert.That( text.Contains( "PDF" ), Is.True );
+				Trace.WriteLine( $"Found text: {text}" );
+			}
+			fpdf_text.FPDFTextFindClose( findHandle );
+			fpdfview.FPDF_ClosePage( page );
+			fpdfview.FPDF_CloseDocument( document );
+		}
 	}
 }
