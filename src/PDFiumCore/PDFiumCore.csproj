@@ -11,7 +11,7 @@
     <Authors>DJGosnell</Authors>
 	<PackageIcon>icon.png</PackageIcon>
     <DocumentationFile>PDFiumCore.xml</DocumentationFile>
-    <OutputPath>$(SolutionDir)../artifacts/</OutputPath>
+		<OutputPath>../../artifacts/</OutputPath>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
