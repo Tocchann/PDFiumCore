@@ -53,7 +53,6 @@ namespace PDFiumCore
 		{
 			var __arg0 = text_page is null ? __IntPtr.Zero : text_page.__Instance;
 			result = string.Empty;
-			int __ret = 0;
 			var allocBuffer = __IntPtr.Zero;
 			// 使わない場合も含めて確保しておく(最適化ミスなどで消されないように確実に確保)
 			var buffer = stackalloc char[1024];
@@ -64,12 +63,11 @@ namespace PDFiumCore
 				allocBuffer = Marshal.AllocCoTaskMem( count * sizeof( char ) );
 				ptr = allocBuffer;
 			}
-			__ret = __Internal.FPDFTextGetText( __arg0, start_index, count, ptr );
+			var __ret = __Internal.FPDFTextGetText( __arg0, start_index, count, ptr );
 			if( __ret > 0 )
 			{
 				unsafe
 				{
-					// 終端分を含んだ長さを返すので、-1する(終端分は外側では考慮しない)
 					result = new string( (char*)ptr.ToPointer(), 0, Math.Min(count,__ret) );
 				}
 			}
